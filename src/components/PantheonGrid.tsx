@@ -107,12 +107,15 @@ export function PantheonGrid() {
                 harvesters to high-density canopy sprayers based on seasonal needs.
               </p>
 
-              {/* The Replaced Image Block */}
-              <div className="mt-auto flex w-full items-center justify-center pt-6">
+              {/* REFINED IMAGE BLOCK */}
+              <div className="relative mt-auto flex w-full items-center justify-center pt-6">
+                {/* Ambient Glow Behind Image */}
+                <div className="bg-primary/20 absolute inset-0 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-60" />
+
                 <img
                   src="/robot_agnostic.png"
                   alt="Arkhon Hardware Agnostic Platform"
-                  className="h-auto w-full object-contain opacity-70 drop-shadow-xl transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
+                  className="relative z-10 h-auto w-full rounded-xl [mask-image:linear-gradient(to_bottom,white_60%,transparent_100%)] object-contain opacity-70 drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)] transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
                 />
               </div>
             </div>
