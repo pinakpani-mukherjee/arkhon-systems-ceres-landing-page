@@ -320,7 +320,7 @@ export default function CeresPage() {
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/uplink"
+                href="/contact"
                 className="group border-primary bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 items-center justify-center gap-3 border px-8 font-mono text-xs font-bold tracking-widest uppercase transition-all"
               >
                 Initiate Pilot Uplink

@@ -48,7 +48,7 @@ const founders = [
   },
   {
     id: 'CTO_NODE',
-    name: 'Romulo Silva Chaves',
+    name: 'Romulo Chaves Silva',
     title: 'Co-Founder & CTO',
     image: '/romulo.jpg',
     roleBadge: 'PhD Candidate, UTokyo // Computer Vision',
