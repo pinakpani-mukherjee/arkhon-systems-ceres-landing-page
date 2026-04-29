@@ -6,16 +6,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Send, Globe, ShieldCheck, MapPin, Zap } from 'lucide-react';
+import { Send, Globe, ShieldCheck, MapPin, Zap, CheckCircle2 } from 'lucide-react';
+import { sendEmail } from '@/app/actions/sendEmail'; // Adjust path if using /src
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [transmitStatus, setTransmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Logic for Resend will go here later
-    setTimeout(() => setIsSubmitting(false), 2000);
+    setTransmitStatus('idle');
+
+    // Automatically pull all data from the named inputs in the form
+    const formData = new FormData(e.currentTarget);
+
+    // Fire the secure Server Action
+    const result = await sendEmail(formData);
+
+    if (result.success) {
+      setTransmitStatus('success');
+      e.currentTarget.reset(); // Clear the form
+    } else {
+      setTransmitStatus('error');
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -112,6 +128,7 @@ export default function ContactPage() {
                       Full_Name
                     </label>
                     <Input
+                      name="name" // Added name attribute
                       placeholder="Kenichi Yamada"
                       className="focus-visible:ring-primary h-12 rounded-none border-white/10 bg-transparent"
                       required
@@ -122,6 +139,7 @@ export default function ContactPage() {
                       Email_Address
                     </label>
                     <Input
+                      name="email" // Added name attribute
                       type="email"
                       placeholder="query@arkhonsystems.com"
                       className="focus-visible:ring-primary h-12 rounded-none border-white/10 bg-transparent"
@@ -135,6 +153,7 @@ export default function ContactPage() {
                     Organization
                   </label>
                   <Input
+                    name="org" // Added name attribute
                     placeholder="University / Corporation / Fund"
                     className="focus-visible:ring-primary h-12 rounded-none border-white/10 bg-transparent"
                   />
@@ -145,27 +164,40 @@ export default function ContactPage() {
                     Message_Payload
                   </label>
                   <Textarea
+                    name="message" // Added name attribute
                     placeholder="Briefly describe your mission parameters..."
                     className="focus-visible:ring-primary min-h-[150px] resize-none rounded-none border-white/10 bg-transparent"
                     required
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full items-center justify-center gap-3 rounded-none font-bold tracking-widest uppercase transition-all"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 animate-spin" /> TRANSMITTING...
-                    </span>
-                  ) : (
-                    <>
-                      TRANSMIT MESSAGE <Send className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
+                {transmitStatus === 'error' && (
+                  <div className="border border-red-500/30 bg-red-500/10 p-3 text-center font-mono text-[10px] text-red-500 uppercase">
+                    Transmission Failed. Check connection and retry.
+                  </div>
+                )}
+
+                {transmitStatus === 'success' ? (
+                  <div className="flex h-14 w-full items-center justify-center gap-3 border border-green-500/30 bg-green-500/10 font-mono text-sm font-bold tracking-widest text-green-500 uppercase">
+                    <CheckCircle2 className="h-5 w-5" /> PAYLOAD DELIVERED
+                  </div>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-14 w-full items-center justify-center gap-3 rounded-none font-bold tracking-widest uppercase transition-all"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 animate-spin" /> TRANSMITTING...
+                      </span>
+                    ) : (
+                      <>
+                        TRANSMIT MESSAGE <Send className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                )}
 
                 <p className="text-muted-foreground mt-4 text-center font-mono text-[9px] tracking-widest uppercase">
                   By transmitting, you agree to Arkhon secure comms protocols.
