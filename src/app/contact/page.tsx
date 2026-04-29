@@ -14,25 +14,30 @@ export default function ContactPage() {
   const [transmitStatus, setTransmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setTransmitStatus('idle');
+      e.preventDefault();
+      
+      // 1. Lock in the form reference BEFORE the async call
+      const form = e.currentTarget;
+      
+      setIsSubmitting(true);
+      setTransmitStatus('idle');
 
-    // Automatically pull all data from the named inputs in the form
-    const formData = new FormData(e.currentTarget);
+      // Use the captured reference
+      const formData = new FormData(form);
+      
+      // Fire the secure Server Action
+      const result = await sendEmail(formData);
 
-    // Fire the secure Server Action
-    const result = await sendEmail(formData);
+      if (result.success) {
+        setTransmitStatus('success');
+        // 2. Safely call reset on the captured reference
+        form.reset(); 
+      } else {
+        setTransmitStatus('error');
+      }
 
-    if (result.success) {
-      setTransmitStatus('success');
-      e.currentTarget.reset(); // Clear the form
-    } else {
-      setTransmitStatus('error');
-    }
-
-    setIsSubmitting(false);
-  };
+      setIsSubmitting(false);
+    };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-32 pb-20">
